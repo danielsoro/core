@@ -61,6 +61,12 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
                ResourceGeneratorUtil.getJpqlEntityVariable(entityTable));
       String resourcePath = ResourceGeneratorUtil.getResourcePath(context);
 
+      String idTypePattern = "id";
+      if (ResourceGeneratorUtil.isNumberIdType(entity))
+      {
+         idTypePattern = "id:[0-9][0-9]*";
+
+      }
       Map<Object, Object> map = new HashMap<>();
       map.put("entity", entity);
       map.put("idType", idType);
@@ -72,6 +78,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("idClause", idClause);
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
+      map.put("idTypePattern", idTypePattern);
 
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
       Template processor = templateFactory.create(templateResource, FreemarkerTemplate.class);

@@ -32,7 +32,7 @@ public class ${entityTable}Endpoint
    }
 
    @DELETE
-   @Path("/{id:[0-9][0-9]*}")
+   @Path("/{${idTypePattern}}")
    public Response deleteById(@PathParam("id") ${idType} id)
    {
       ${entity.getName()} entity = em.find(${entity.getName()}.class, id);
@@ -44,7 +44,7 @@ public class ${entityTable}Endpoint
    }
 
    @GET
-   @Path("/{id:[0-9][0-9]*}")
+   @Path("/{${idTypePattern}}")
    @Produces("${contentType}")
    public Response findById(@PathParam("id") ${idType} id)
    {
@@ -80,7 +80,7 @@ public class ${entityTable}Endpoint
    }
 
    @PUT
-   @Path("/{id:[0-9][0-9]*}")
+   @Path("/{${idTypePattern}}")
    @Consumes("${contentType}")
    public Response update(${entity.getName()} entity)
    {

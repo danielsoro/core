@@ -19,14 +19,15 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.Member;
 import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * A utlity class that provides information about the project or the JPA entity. This is to be used in the JAX-RS
  * Resource generators.
- *
  */
 public class ResourceGeneratorUtil
 {
@@ -66,21 +67,29 @@ public class ResourceGeneratorUtil
 
    public static String resolveIdType(JavaClass<?> entity)
    {
+      Type<?> type = getIdType(entity);
+      if (type != null)
+         return type.getName();
+      return "Object";
+   }
+
+   public static Type<?> getIdType(JavaClass<?> entity)
+   {
       for (Member<?> member : entity.getMembers())
       {
          if (member.hasAnnotation(Id.class))
          {
             if (member instanceof Method)
             {
-               return ((Method<?, ?>) member).getReturnType().getName();
+               return ((Method<?, ?>) member).getReturnType();
             }
             if (member instanceof Field)
             {
-               return ((Field<?>) member).getType().getName();
+               return ((Field<?>) member).getType();
             }
          }
       }
-      return "Object";
+      return null;
    }
 
    public static String resolveIdGetterName(JavaClass<?> entity)
@@ -111,7 +120,8 @@ public class ResourceGeneratorUtil
                for (Method<?, ?> method : entity.getMethods())
                {
                   // It's a getter
-                  if (method.getParameters().size() == 0 &&  (method.getReturnType() != null && type.equals(method.getReturnType().getQualifiedName())))
+                  if (method.getParameters().size() == 0 && (method.getReturnType() != null && type
+                           .equals(method.getReturnType().getQualifiedName())))
                   {
                      if (method.getName().toLowerCase().contains(name.toLowerCase()))
                      {
@@ -272,5 +282,10 @@ public class ResourceGeneratorUtil
    public static char getJpqlEntityVariable(String entityTable)
    {
       return entityTable.toLowerCase().charAt(0);
+   }
+
+   public static boolean isNumberIdType(JavaClass<?> entity)
+   {
+      return getIdType(entity) instanceof Number;
    }
 }
