@@ -17,10 +17,12 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -88,6 +90,17 @@ public class FileResourceTest
       file.deleteOnExit();
       FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
       Assert.assertNull(fileResource.getChild("foo"));
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testFileResourceWithSpecialChar() throws IOException
+   {
+      File file = new File("~/teste");
+      Resource<?> fileResource = resourceFactory.create(FileResource.class, file);
+      List<Resource<?>> resolve = new ResourcePathResolver(resourceFactory, fileResource, file.getPath()).resolve();
+      Assert.assertEquals(OperatingSystemUtils.getUserHomeDir() + "/teste", resolve.get(0).getUnderlyingResourceObject().toString());
+      Assert.assertEquals(OperatingSystemUtils.getUserHomeDir() + "/teste", fileResource.getUnderlyingResourceObject().toString());
    }
 
    @Test
