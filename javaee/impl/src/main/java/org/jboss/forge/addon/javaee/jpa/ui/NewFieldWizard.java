@@ -278,30 +278,30 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
             return !transientField.getValue();
          }
       });
-//      nullable.setEnabled(new Callable<Boolean>()
-//      {
-//         @Override
-//         public Boolean call() throws Exception
-//         {
-//            return !transientField.getValue();
-//         }
-//      });
-//      insertable.setEnabled(new Callable<Boolean>()
-//      {
-//         @Override
-//         public Boolean call() throws Exception
-//         {
-//            return !transientField.getValue();
-//         }
-//      });
-//      updatable.setEnabled(new Callable<Boolean>()
-//      {
-//         @Override
-//         public Boolean call() throws Exception
-//         {
-//            return !transientField.getValue();
-//         }
-//      });
+      nullable.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !transientField.getValue();
+         }
+      });
+      insertable.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !transientField.getValue();
+         }
+      });
+      updatable.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !transientField.getValue();
+         }
+      });
       length.setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -492,17 +492,18 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
             {
                field.addAnnotation(Column.class).setStringValue("name", columnName.getValue());
             }
-            if (nullable.isEnabled() && nullable.getValue())
+
+            if (nullable.isEnabled() && nullable.hasValue())
             {
-               field.getAnnotation(Column.class).setLiteralValue("nullable", nullable.getValue().toString());
+                setLiteralValueInColumn(field, "nullable", nullable.getValue().toString());
             }
-            if (insertable.isEnabled() && insertable.getValue())
+            if (insertable.isEnabled() && insertable.hasValue())
             {
-               field.getAnnotation(Column.class).setLiteralValue("insertable", insertable.getValue().toString());
+                setLiteralValueInColumn(field, "insertable", insertable.getValue().toString());
             }
-            if (updatable.isEnabled() && updatable.getValue())
+            if (updatable.isEnabled() && updatable.hasValue())
             {
-               field.getAnnotation(Column.class).setLiteralValue("updatable", updatable.getValue().toString());
+                setLiteralValueInColumn(field, "updatable", updatable.getValue().toString());
             }
          }
          else
@@ -519,17 +520,17 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          {
             field.getAnnotation(Column.class).setStringValue("name", columnName.getValue());
          }
-         if (nullable.isEnabled() && nullable.getValue())
+         if (nullable.isEnabled() && nullable.hasValue())
          {
-            field.getAnnotation(Column.class).setLiteralValue("nullable", nullable.getValue().toString());
+            setLiteralValueInColumn(field, "nullable", nullable.getValue().toString());
          }
-         if (insertable.isEnabled() && insertable.getValue())
+         if (insertable.isEnabled() && insertable.hasValue())
          {
-            field.getAnnotation(Column.class).setLiteralValue("insertable", insertable.getValue().toString());
+            setLiteralValueInColumn(field, "insertable", insertable.getValue().toString());
          }
-         if (updatable.isEnabled() && updatable.getValue())
+         if (updatable.isEnabled() && updatable.hasValue())
          {
-            field.getAnnotation(Column.class).setLiteralValue("updatable", updatable.getValue().toString());
+            setLiteralValueInColumn(field, "updatable", updatable.getValue().toString());
          }
          if (temporalType.isEnabled())
          {
@@ -545,7 +546,13 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       }
    }
 
-   /**
+    private void setLiteralValueInColumn(FieldSource<JavaClassSource> field, String literal, String value) {
+        if (field.getAnnotation(Column.class) != null) {
+            field.getAnnotation(Column.class).setLiteralValue(literal, value);
+        }
+    }
+
+    /**
     * @param context
     * @param javaResource
     * @param field

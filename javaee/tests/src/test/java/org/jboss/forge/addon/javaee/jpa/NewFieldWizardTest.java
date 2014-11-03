@@ -209,9 +209,7 @@ public class NewFieldWizardTest
       Assert.assertFalse(field.hasAnnotation(Column.class));
       Assert.assertTrue(field.hasAnnotation(Transient.class));
       Assert.assertEquals("String", field.getType().getName());
-      Assert.assertNull(field.getAnnotation(Column.class).getLiteralValue("nullable"));
-      Assert.assertNull(field.getAnnotation(Column.class).getLiteralValue("updatable"));
-      Assert.assertNull(field.getAnnotation(Column.class).getLiteralValue("insertable"));
+      Assert.assertNull(field.getAnnotation(Column.class));
    }
 
    @Test
