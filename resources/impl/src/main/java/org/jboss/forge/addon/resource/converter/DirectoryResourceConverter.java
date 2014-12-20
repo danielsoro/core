@@ -16,13 +16,13 @@ import org.jboss.forge.addon.convert.AbstractConverter;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
  */
 
 @Singleton
@@ -40,13 +40,14 @@ public class DirectoryResourceConverter extends AbstractConverter<Object, Direct
    @Override
    public DirectoryResource convert(Object source)
    {
-      File file;
       if (source == null || Strings.isNullOrEmpty(source.toString()))
          return null;
-      else if (source instanceof File)
-         file = (File) source;
-      else
-         file = new File(source.toString());
-      return resourceFactory.create(DirectoryResource.class, file);
+      return resourceFactory.create(DirectoryResource.class, new File(getResourcePathResolved(source.toString())));
+   }
+
+   private String getResourcePathResolved(String underlyingResource)
+   {
+      return new ResourcePathResolver(resourceFactory, null, underlyingResource).resolve().get(0)
+               .getFullyQualifiedName();
    }
 }
